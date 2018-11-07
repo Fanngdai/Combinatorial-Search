@@ -77,7 +77,6 @@ void construct_candidates(int a[], int k, int c[], int *ncandidates) {
 	for (int i=1; i<amt_vertex; i++) {
 		in_perm[i] = 0;
 	}
-
 	for (int i=1; i<k; i++) {
 		in_perm[a[i]] = 1;
 	}
@@ -147,8 +146,8 @@ int main() {
 		// make sure the values are not ""
     }
 
-	start = clock();
 	int a[amt_vertex];
+	start = clock();
 	backtrack(a,0);
 	end = clock();
 
