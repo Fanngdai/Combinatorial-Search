@@ -45,21 +45,30 @@ int bandwidth;
 
 
 void process_solution(int a[], int k) {
+	// for(int i=1; i<=amt_vertex; i++)
+	// 	printf("%d ", a[i]);
+	// printf("\n");
+
 	int max = 0;
 	for(int e = 0; e < amt_edge; e++) {
 		int index = -1;
 		int one = edges[e][0];
 		int two = edges[e][1];
+
 		for(int i=1; i<=k; i++) {
 			if(index!=-1 && (a[i]==one || a[i]==two)) {
-				if(abs(index-i) > max) {
-					max = abs(index-i);
+				int tempMax = abs(index-i);
+				if(tempMax > bandwidth) {
+					return;
+				} else if(tempMax > max) {
+					max = tempMax;
 				}
 				break;
 			} else if(a[i]==one || a[i]==two) {
 				index = i;
 			}
 		}
+
 	}
 
 	if(max < bandwidth) {
@@ -73,10 +82,10 @@ void process_solution(int a[], int k) {
 /*	What are possible elements of the next slot in the permutation?  */
 void construct_candidates(int a[], int k, int c[], int *ncandidates) {
 	// What is not in the permutation?
-	int in_perm[NMAX];
-	for (int i=1; i<amt_vertex; i++) {
-		in_perm[i] = 0;
-	}
+	int in_perm[NMAX] = {0};
+	// for (int i=1; i<amt_vertex; i++) {
+	// 	in_perm[i] = 0;
+	// }
 
 	for (int i=1; i<k; i++) {
 		in_perm[a[i]] = 1;
@@ -85,8 +94,7 @@ void construct_candidates(int a[], int k, int c[], int *ncandidates) {
 	*ncandidates = 0;
 	for(int i=1; i<=amt_vertex; i++) {
 		if (in_perm[i] == 0) {
-			c[*ncandidates] = i;
-			*ncandidates += 1;
+			c[(*ncandidates)++] = i;
 		}
 	}
 }
@@ -102,12 +110,9 @@ void backtrack(int a[], int k) {
     if (k==amt_vertex) {
 		if(a[1]<a[amt_vertex]) {
 			process_solution(a,k);
-			if(bandwidth == 1)
-				return;
 		}
 	} else {
-		k++;
-		construct_candidates(a,k,c,&ncandidates);
+		construct_candidates(a,++k,c,&ncandidates);
         for(int i=0; i<ncandidates; i++) {
             a[k] = c[i];
         	backtrack(a,k);
