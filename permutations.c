@@ -30,10 +30,6 @@ http://www.amazon.com/exec/obidos/ASIN/0387001638/thealgorithmrepo/
 #include <limits.h>
 #include <string.h>
 
-#define TRUE    1
-#define FALSE   0
-typedef int bool;
-
 // max possible next extensions
 #define MAXCANDIDATES   100
 // maximum solution size
@@ -44,7 +40,7 @@ int amt_edge;
 int *result;
 int bandwidth;
 // found all solutions yet?
-bool finished = FALSE;
+int finished = 0;
 
 
 
@@ -56,7 +52,6 @@ void process_solution(int a[], int k) {
 		int two = edges[e][1];
 		for(int i=1; i<=k; i++) {
 			if(index!=-1 && (a[i]==one || a[i]==two)) {
-				// printf("###%d\t%d\t%d\n", index, i, abs(index-i));
 				if(abs(index-i) > max) {
 					max = abs(index-i);
 				}
@@ -69,53 +64,50 @@ void process_solution(int a[], int k) {
 
 	if(max < bandwidth) {
 		memcpy(result, a, (amt_vertex+1)*sizeof(int));
-		// result = a;
 		bandwidth = max;
-
-		// for(int i=1; i<=amt_vertex; i++)
-		// 	printf("%d\n", result[i]);
-		// printf("\n\n");
 	}
 }
 
 
 
 /*	What are possible elements of the next slot in the permutation?  */
-void construct_candidates(int a[], int k, int n, int c[], int *ncandidates) {
-	// counter
-	int i;
+void construct_candidates(int a[], int k, int c[], int *ncandidates) {
 	// What is not in the permutation?
-	bool in_perm[NMAX];
+	int in_perm[amt_vertex];
+	for (int i=1; i<amt_vertex; i++) {
+		in_perm[i] = 0;
+	}
 
-	for (i=1; i<NMAX; i++)
-		in_perm[i] = FALSE;
-	for (i=1; i<k; i++)
-		in_perm[a[i]] = TRUE;
+	for (int i=1; i<k; i++) {
+		in_perm[a[i]] = 1;
+	}
 
 	*ncandidates = 0;
-	for (i=1; i<=n; i++)
-		if (in_perm[i] == FALSE) {
-			c[ *ncandidates] = i;
-			*ncandidates = *ncandidates + 1;
+	for (int i=1; i<=amt_vertex; i++) {
+		if (in_perm[i] == 0) {
+			c[*ncandidates] = i;
+			*ncandidates += 1;
 		}
+	}
 }
 
 
 
-void backtrack(int a[], int k, int input) {
+void backtrack(int a[], int k) {
 	// candidates for next position
     int c[MAXCANDIDATES];
 	// next position candidate count
     int ncandidates;
 
-    if (k==input) {
-        process_solution(a,k);
+    if (k==amt_vertex) {
+		if(a[1]>a[amt_vertex])
+    		process_solution(a,k);
 	} else {
         k = k+1;
-        construct_candidates(a,k,input,c,&ncandidates);
+        construct_candidates(a,k,c,&ncandidates);
         for(int i=0; i<ncandidates; i++) {
             a[k] = c[i];
-            backtrack(a,k,input);
+            backtrack(a,k);
 			if(finished)
 				return;	/* terminate early */
         }
@@ -127,12 +119,14 @@ void backtrack(int a[], int k, int input) {
 
 int main() {
 	clock_t start, end;
-	FILE *file = fopen("./Samples/g-bt-10-9", "r");
 
+	char *filename = "./Samples/g-bt-10-9";
+	FILE *file = fopen(filename, "r");
 	fscanf(file, "%d\n%d", &amt_vertex, &amt_edge);
 	// printf("%d\n%d\n", amt_vertex, amt_edge);
 	// printf("%d\n", amt_edge);
-	result = (int *)malloc(amt_vertex * sizeof(int));
+
+	result = (int *)malloc((amt_vertex+1) * sizeof(int));
 	edges = (int **)malloc(amt_edge*sizeof(int *));
 	for(int i=0; i<amt_edge; i++)
 		edges[i] = (int *)malloc(2 * sizeof(int));
@@ -155,9 +149,10 @@ int main() {
 
 	start = clock();
 	int a[amt_vertex];
-	backtrack(a,0,amt_vertex);
+	backtrack(a,0);
 	end = clock();
 
+	printf("Filename: %s\n", filename);
 	printf("Max size:\t%d\n", bandwidth);
 	for(int i=1; i<=amt_vertex; i++) {
 		printf("%d ", result[i]);
