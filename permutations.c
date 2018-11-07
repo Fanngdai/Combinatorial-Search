@@ -33,14 +33,14 @@ http://www.amazon.com/exec/obidos/ASIN/0387001638/thealgorithmrepo/
 // max possible next extensions
 #define MAXCANDIDATES   100
 // maximum solution size
-#define NMAX            100
+// #define NMAX            100
 int **edges;
 int amt_vertex;
 int amt_edge;
 int *result;
 int bandwidth;
 // found all solutions yet?
-int finished = 0;
+// int finished = 0;
 
 
 
@@ -74,7 +74,7 @@ void process_solution(int a[], int k) {
 void construct_candidates(int a[], int k, int c[], int *ncandidates) {
 	// What is not in the permutation?
 	int in_perm[amt_vertex];
-	for (int i=1; i<amt_vertex; i++) {
+	for (int i=0; i<amt_vertex; i++) {
 		in_perm[i] = 0;
 	}
 
@@ -100,19 +100,18 @@ void backtrack(int a[], int k) {
     int ncandidates;
 
     if (k==amt_vertex) {
-		if(a[1]>a[amt_vertex])
-    		process_solution(a,k);
+		if(a[1] > a[amt_vertex])
+			process_solution(a,k);
 	} else {
-        k = k+1;
+        k++;
         construct_candidates(a,k,c,&ncandidates);
         for(int i=0; i<ncandidates; i++) {
             a[k] = c[i];
             backtrack(a,k);
-			if(finished)
-				return;	/* terminate early */
+			// if(finished)
+			// 	return;	/* terminate early */
         }
     }
-
 }
 
 
@@ -120,6 +119,9 @@ void backtrack(int a[], int k) {
 int main() {
 	char *filename = "./Samples/g-bt-10-9";
 	FILE *file = fopen(filename, "r");
+	if(file == NULL)
+		exit(0);
+
 	fscanf(file, "%d\n%d", &amt_vertex, &amt_edge);
 	// printf("%d\n%d\n", amt_vertex, amt_edge);
 	// printf("%d\n", amt_edge);
