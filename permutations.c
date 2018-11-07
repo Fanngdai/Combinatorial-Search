@@ -77,6 +77,7 @@ void construct_candidates(int a[], int k, int c[], int *ncandidates) {
 	for (int i=1; i<amt_vertex; i++) {
 		in_perm[i] = 0;
 	}
+
 	for (int i=1; i<k; i++) {
 		in_perm[a[i]] = 1;
 	}
@@ -117,8 +118,6 @@ void backtrack(int a[], int k) {
 
 
 int main() {
-	clock_t start, end;
-
 	char *filename = "./Samples/g-bt-10-9";
 	FILE *file = fopen(filename, "r");
 	fscanf(file, "%d\n%d", &amt_vertex, &amt_edge);
@@ -147,12 +146,13 @@ int main() {
     }
 
 	int a[amt_vertex];
+	clock_t start, end;
 	start = clock();
 	backtrack(a,0);
 	end = clock();
 
 	printf("Filename: %s\n", filename);
-	printf("Max size:\t%d\n", bandwidth);
+	printf("Max size: %d\n", bandwidth);
 	for(int i=1; i<=amt_vertex; i++) {
 		printf("%d ", result[i]);
 	}
