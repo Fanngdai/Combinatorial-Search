@@ -1,28 +1,3 @@
-/*	permutations.c
-
-	Construct all permutations via backtracking.
-
-	by: Steven Skiena
-	begun: March 27, 2002
-*/
-/*
-Copyright 2003 by Steven S. Skiena; all rights reserved.
-
-Permission is granted for use in non-commerical applications
-provided this copyright notice remains intact and unchanged.
-
-This program appears in my book:
-
-"Programming Challenges: The Programming Contest Training Manual"
-by Steven Skiena and Miguel Revilla, Springer-Verlag, New York 2003.
-
-See our website www.programming-challenges.com for additional information.
-
-This book can be ordered from Amazon.com at
-
-http://www.amazon.com/exec/obidos/ASIN/0387001638/thealgorithmrepo/
-
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,7 +62,7 @@ void swap(int *a, int *b) {
 
 
 void permute(int *a,int i) {
-	if (amt_vertex == i){
+	if (amt_vertex-1 == i){
 		if(a[0]<a[amt_vertex-1]) {
 			// for(int j=0; j<amt_vertex; j++)
 			// 	printf("%d ", a[j]);
@@ -97,10 +72,10 @@ void permute(int *a,int i) {
 		return;
    }
 
+   if(checkMax(a, i)>bandwidth)
+	   return;
 	for (int j = i; j<amt_vertex; j++) {
 		swap(a+i,a+j);
-		if(checkMax(a, j)>bandwidth)
-			return;
 		permute(a,i+1);
 		swap(a+i,a+j);
 	}
@@ -109,7 +84,7 @@ void permute(int *a,int i) {
 
 
 int main() {
-	char *filename = "./Samples/g-bt-10-9";
+	char *filename = "./Samples/g-t-13-12";
 	FILE *file = fopen(filename, "r");
 	if(file == NULL)
 		exit(0);
@@ -177,45 +152,65 @@ int main() {
 
 
 
-
-/*	What are possible elements of the next slot in the permutation?  */
-void construct_candidates(int a[], int k, int c[], int *ncandidates) {
-	// What is not in the permutation?
-	int in_perm[NMAX] = {0};
-	// int in_perm[NMAX];
-	// for (int i=1; i<amt_vertex; i++) {
-	// 	in_perm[i] = 0;
-	// }
-
-	for (int i=1; i<k; i++) {
-		in_perm[a[i]] = 1;
-	}
-
-	*ncandidates = 0;
-	for(int i=1; i<=amt_vertex; i++) {
-		if (in_perm[i] == 0) {
-			c[(*ncandidates)++] = i;
-		}
-	}
-}
-
-
-
-void backtrack(int a[], int k) {
-	// candidates for next position
-    int c[MAXCANDIDATES];
-	// next position candidate count
-    int ncandidates;
-
-    if (k==amt_vertex) {
-		if(a[1]<a[amt_vertex]) {
-			process_solution(a);
-		}
-	} else {
-		construct_candidates(a,++k,c,&ncandidates);
-        for(int i=0; i<ncandidates; i++) {
-            a[k] = c[i];
-        	backtrack(a,k);
-        }
-    }
-}
+// /*	What are possible elements of the next slot in the permutation?  */
+// void construct_candidates(int a[], int k, int c[], int *ncandidates) {
+// 	// What is not in the permutation?
+// 	int in_perm[NMAX] = {0};
+// 	// int in_perm[NMAX];
+// 	// for (int i=1; i<amt_vertex; i++) {
+// 	// 	in_perm[i] = 0;
+// 	// }
+//
+// 	for (int i=1; i<k; i++) {
+// 		in_perm[a[i]] = 1;
+// 	}
+//
+// 	*ncandidates = 0;
+// 	for(int i=1; i<=amt_vertex; i++) {
+// 		if (in_perm[i] == 0) {
+// 			c[(*ncandidates)++] = i;
+// 		}
+// 	}
+// }
+//
+//
+//
+// void backtrack(int a[], int k) {
+// 	// candidates for next position
+//     int c[MAXCANDIDATES];
+// 	// next position candidate count
+//     int ncandidates;
+//
+//     if (k==amt_vertex) {
+// 		if(a[1]<a[amt_vertex]) {
+// 			process_solution(a);
+// 		}
+// 	} else {
+// 		construct_candidates(a,++k,c,&ncandidates);
+//         for(int i=0; i<ncandidates; i++) {
+//             a[k] = c[i];
+//         	backtrack(a,k);
+//         }
+//     }
+// }
+//
+//
+// char *file[77] = { "g-bt-10-9", "g-bt-11-10", "g-bt-12-11", "g-bt-127-126",
+// 				"g-bt-13-12", "g-bt-14-13", "g-bt-15-14", "g-bt-16-15",
+// 				"g-bt-17-16", "g-bt-18-17", "g-bt-19-18", "g-bt-20-19",
+// 				"g-bt-63-62", "g-gg-100-180", "g-gg-12-17", "g-gg-15-22",
+// 				"g-gg-16-24", "g-gg-18-27", "g-gg-20-31", "g-gg-24-38",
+// 				"g-gg-25-40", "g-gg-28-45", "g-gg-30-49", "g-gg-33-52",
+// 				"g-gg-35-58", "g-gg-36-60", "g-gg-9-12", "g-gg-91-162",
+// 				"g-k-50-1225", "g-p-10-9", "g-p-100-99", "g-p-11-10",
+// 				"g-p-12-11", "g-p-13-12", "g-p-14-13", "g-p-15-14",
+// 				"g-p-16-15", "g-p-17-16", "g-p-18-17", "g-p-19-18",
+// 				"g-p-20-19", "g-p-25-24", "g-p-30-29", "g-p-40-39",
+// 				"g-p-50-49", "g-r-10-14", "g-r-10-9", "g-r-100-501",
+// 				"g-r-11-15", "g-r-12-15", "g-r-13-15", "g-r-15-24",
+// 				"g-r-18-46", "g-r-20-42", "g-r-25-83", "g-r-30-109",
+// 				"g-r-50-301", "g-r-7-7", "g-r-8-11", "g-r-8-4", "g-r-8-6",
+// 				"g-r-9-13", "g-t-10-9", "g-t-11-10", "g-t-12-11",
+// 				"g-t-13-12", "g-t-14-13", "g-t-15-14", "g-t-17-16",
+// 				"g-t-20-19", "g-t-25-24", "g-t-30-29", "g-t-35-34",
+// 				"g-t-40-39", "g-t-7-6", "g-t-8-7","g-t-9-8"};
